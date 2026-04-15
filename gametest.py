@@ -43,7 +43,13 @@ C_WHEEL  = ( 30,  30,  30)
 C_DRIFT  = (255, 220,  50, 160)   # drift trail colour (RGBA)
 
 # ─── Asset Paths (cross-platform, international filenames) ──────────────────
-SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
+import sys
+if getattr(sys, 'frozen', False):
+    # Đang chạy dưới dạng file .exe đóng gói
+    SCRIPT_DIR = os.path.dirname(sys.executable)
+else:
+    # Đang chạy bằng script Python bình thường trong PyCharm
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def find_asset(*rel_parts):
     """Try to locate an asset relative to the script; return None if missing."""
