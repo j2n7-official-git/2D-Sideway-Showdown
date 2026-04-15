@@ -1,0 +1,83 @@
+Metadata-Version: 2.4
+Name: pygame-3d-engine
+Version: 0.1.0
+Summary: A simple pygame 3D engine
+Author-email: YArman Kiani <kianiarman91@gmail.com>
+License: MIT License
+        
+        Copyright (c) 2025 Arman Kiani
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Project-URL: Homepage, https://github.com/AriK822/3D-Engine-for-pygame.git
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+# 3D-Engine-for-pygame
+
+
+## Report by Arman Kiani.
+
+- This projects contains a 3D render engine for python, made in 4 days.
+Two files are created for viewing flexibility and capability of engine, showing it can be used for any project / game with the right adjustment.
+
+***
+- showcase/pygame viewer.py
+	general visualization of engine capabilities like collision detection and direct obj file importing.
+
+- Minecraft/pygame viewer.py 
+	shows flexibility of the engine being used in a simple real life game.
+***
+
+Controls:
+Mouse: Look
+wasd: move
+R click, L click: Place, break block / Shoot
+L shift: Run
+Space: Jump
+
+
+## Down sides:
+Doesnt support gpu acceleration, resulting in performance issues for big projects.
+Projection bug for objects behind the camera. (needs cutting and generating new vertices which gets advanced)
+doesn't support textures and advanced lighting.
+
+## Summery:
+There is room for a lot of improvements due to code clarity and use of OOP programing.
+
+Best wishes, Arman Kiani :)
+
+
+
+## Additional info about engine functionality:
+- Render method / algorithm: Projection
+- Moving: Shifting the world,
+- Rotating the camera: rotating the world around camera (matrix multiplication).
+- Rendering faces and edges: Vertex look up + pygame polygon and draw.line()
+- Efficiency: blocking objects behind the camera (not rendered).
+- Render priority: averaging face vertices z dimension.
+- Shading: standard deviation of vertices z dimension and mixing color by shadow color (smart simple approach simulationg light).
+- collision detection: checking 2D polygon renders.
+- Shadows: clipping y to ground level for all vertices.
+- Ability to importi obj files directly with one command!
