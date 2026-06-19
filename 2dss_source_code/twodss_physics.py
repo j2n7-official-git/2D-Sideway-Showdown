@@ -624,6 +624,11 @@ def move_car(racer, dt: float) -> None:
     spd = racer.velocity * _MOVE_SCALE
     vx, vy = fx * spd, fy * spd
 
+    # PATCH START: call drift_physics in integrate
+    if getattr(racer, "is_drifting", False):
+        drift_physics(racer, dt=dt)
+    # PATCH END
+
     # ── [A] ESCAPE: xe đang NẰM TRONG tường ──────────────────────────
     if is_hard_wall(int(racer.x), int(racer.y)):
         for dist in [6, 12, 20, 32, 48]:
