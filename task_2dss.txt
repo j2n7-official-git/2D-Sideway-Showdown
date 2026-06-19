@@ -1,0 +1,36 @@
+TASK CẦN LÀM:
+1) nitro:
+1: tương tác:
+nhấn và giữ L-CTRL: nhấn giữ bao nhiêu sẽ tăng tốc độ bao nhiêu
+chừng nào không dùng nữa thì nhả ra để tiết kiệm nitro
+2: tính vật lí:
+- khi xe chạy, thì nitro bắt đầu tích trữ dần gas chậm nằm trong xlsx luật, nhưng mà khi drift thì tốc độ drift sẽ tăng tốc độ lên nhan 40% và bình đẳng các xe
+- nhưng xe đứng yên thì nitro sẽ không được tăng lên
+- nitro có tác dung làm lực đẩy khiến xe tự chạy kể cả là tốc độ 0, thì vẫn tự tăng tốc lên được, khi đã lên tốc độ cao thì nó cũng sẽ tăng đến max theo bản chat của xe thì sẽ thôi (và được cộng them tốc độ bổ trợ),
+- khi HẾT NITRO, tốc độ sẽ trả về bình thường NHƯNG không phải là giảm cụt từ ví dụ gốc là 200 và boost là 250 thì từ 250 về xuống 200 như kiểu là hàm số có điểm gãy loại 1 là delta(y) = delta(b) - delta(a), không có nhá, giảm xuống theo hình thái mượt mà, đầu đoạn giảm dần từ chậm tới nhanh về tốc độ gốc (opinion của anh là giảm theo đồ thị phi tính tuyến hay là tính tuyến bậc 1 với hệ số góc là -1.5 sẽ tốt hơn)
+3: quyền sở hữu: BÌNH ĐẲNG MỌI BOT MỌI XE và thiết kế được nằm trong file xlsx có gửi file tổng về cách dùng nitro, cả về việc tích trữ nitro bình thường và cho phép xe đưuọc phép drift phù hợp
+------
+2 vật lí về đề ga:
+1. tốc độ đề ga không được áp dung tính chat tính chuyến tính tuyến như y = ax+b và đây là SỰ THẬT NGOÀI ĐỜI, gần như xe các số đầu tiên ko bao giờ lên được theo phương trình tính tuyến cả, vì nó luôn bị ảnh hưởng bởi gia tốc thực tế (vật lí 10 đó nhưng em quên mất công thức rồi)
+2. nó sẽ đề ga từ từ, như thể 1 với 2 nó sẽ lên hơi chậm, sau đó nó sẽ lên càng nhanh hơn với hàm số như thể là logarit (ko biết nữa, một lát nữa em sẽ có cái đồ thị minh họa cho em xem vì bản than em cũng không thể xác định, vì có cả số D tiến và R lùi nữa)
+3. khi mà nó lên tốc độ max thì tốc độ sẽ lên chậm và cực chậm, chậm tới tiện cận rồi mới tới max và giữ tốc độ max
+khi giảm thì giảm sẽ chậm lại trừ khi nhanh
+(anh cũng giúp em tìm hiểu vật lí đề ga thực tế của xe như thế nào)
+4. ảnh hưởng của vật lí: BÌNH ĐẲNG MỌI XE (và đây em mong là nó sẽ góp phần 20% vào ý thức bộ não của bot)
+-----
+3 - 4 MAP CÒN LẠI
+SANDY ( TWO SPLIT ROAD TECHNIQUE)
+SPORTPIT
+VELODRAMA (2 FLOOR ROAD TECHNIQUE)
+NEW: DUSFACTORY
+----
+4: nối ui
+4.1. NỐI MENU LẠI (VÀ CẬP NHẬT THÊM VÀI BGM TỪ GAME KHÁC VÀ TIẾNG ĐỘNG CƠ (HOẶC KHÔNG KỊP LÀM)
+4.2. MENU PAUSE khi bấm nút P
+4.3. BẢNG TỔNG KẾT SAU KHI ĐUA (UI MỚI)
+NỐI MENU - CAR - MAP - KEYBINDS INSTRUCTION - LOADING - GAME - FINISH - CAR STORE
+4.4: NEW UPDATE: ĐỔI CÁCH CHỌN MAP
+----
+5: NHÂN CÁCH CỦA BOT (vẫn hơi tiêu cực)
+
+
