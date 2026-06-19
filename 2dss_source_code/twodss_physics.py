@@ -576,6 +576,44 @@ def resolve_wall_collision(racer, tx, ty, fx, fy, dt):
     racer.y = ty + ny * 2.0
     racer._cached_normal = (nx, ny)
 
+# PATCH START: drift_physics helper
+def drift_physics(car, dt=0.016):
+    """Drift helper: giảm tốc dọc, ma sát ngang, giới hạn nitro."""
+    import math
+    FACTOR_LONGITUDINAL = 0.92
+    LATERAL_FRICTION = 0.6
+    ANGULAR_DAMPING = 0.85
+    NITRO_DRIFT_MAX_ACCEL_RATIO = 0.5
+
+    vx = getattr(car, "vx", 0.0)
+    vy = getattr(car, "vy", 0.0)
+    angle = getattr(car, "angle", 0.0)
+
+    fx = math.cos(angle)
+    fy = math.sin(angle)
+
+    long_speed = vx * fx + vy * fy
+    lat_speed = -vx * fy + vy * fx
+
+    long_speed *= FACTOR_LONGITUDINAL
+    lat_speed *= max(0.0, 1.0 - LATERAL_FRICTION * dt * 60.0)
+
+    vx = long_speed * fx - lat_speed * fy
+    vy = long_speed * fy + lat_speed * fx
+
+    if hasattr(car, "angular_velocity"):
+        car.angular_velocity *= ANGULAR_DAMPING
+
+    if getattr(car, "nitro_active", False):
+        if hasattr(car, "max_accel") and hasattr(car, "base_max_accel"):
+            car.max_accel = min(car.max_accel, NITRO_DRIFT_MAX_ACCEL_RATIO * car.base_max_accel)
+        else:
+            vx *= 0.98
+            vy *= 0.98
+
+    car.vx = vx
+    car.vy = vy
+# PATCH END
 
 def move_car(racer, dt: float) -> None:
     """
