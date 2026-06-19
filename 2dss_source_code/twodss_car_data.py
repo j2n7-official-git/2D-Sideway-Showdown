@@ -73,6 +73,15 @@ CAR_LIST = [
         "free"       : True,
         "stats"      : {},
     },
+{
+        "id"         : "hyundai_n_vision_74",
+        "name"       : "Hyundai N Vision 74",
+        "brand"      : "Hyundai",
+        "file"       : "hyundai-n-vision-74-displaymode",
+        "brand_logo" : "hyundai.png",
+        "free"       : True,
+        "stats"      : {},
+    },
     {
         "id"         : "mclaren_600lt",
         "name"       : "McLaren 600LT",
@@ -178,76 +187,81 @@ CAR_STATS = {
     "mazda_axela_2012": dict(
         max_speed=188, acceleration=20, brake=17.0, friction=3.5, tier="A",
         speed_levels=[188, 250, 313],
-        nitro_duration=10, nitro_boost=50, nitro_boost_time=4.2, nitro_refill_1per3=6.8,
+        nitro_duration=10.0, nitro_boost=50, nitro_boost_time=4.2, nitro_refill_1per3=6.8,
     ),
     "mazda3_fastback_2020": dict(
         max_speed=188, acceleration=20, brake=20.0, friction=3.5, tier="A",
         speed_levels=[188, 250, 313],
-        nitro_duration=10, nitro_boost=50, nitro_boost_time=4.0, nitro_refill_1per3=6.8,
+        nitro_duration=10.0, nitro_boost=50, nitro_boost_time=4.0, nitro_refill_1per3=6.8,
     ),
     "toyota_ae86_1987": dict(
         max_speed=188, acceleration=20, brake=23.0, friction=3.5, tier="A",
         speed_levels=[188, 250, 313],
-        nitro_duration=10, nitro_boost=50, nitro_boost_time=4.0, nitro_refill_1per3=6.8,
+        nitro_duration=10.0, nitro_boost=50, nitro_boost_time=4.0, nitro_refill_1per3=6.8,
     ),
     "toyota_altezza_gita_2003": dict(
         max_speed=188, acceleration=24, brake=27.6, friction=3.5, tier="A",
         speed_levels=[188, 250, 325],
-        nitro_duration=12, nitro_boost=55, nitro_boost_time=3.5, nitro_refill_1per3=5.4,
+        nitro_duration=12.0, nitro_boost=55, nitro_boost_time=3.5, nitro_refill_1per3=5.4,
     ),
     # ── Tier B — sports cars ─────────────────────────────────────────
     "nissan_gtr_r34": dict(
         max_speed=219, acceleration=30, brake=34.5, friction=4.9, tier="B",
         speed_levels=[219, 263, 338],
-        nitro_duration=12, nitro_boost=55, nitro_boost_time=3.5, nitro_refill_1per3=5.4,
+        nitro_duration=12.0, nitro_boost=55, nitro_boost_time=3.5, nitro_refill_1per3=5.4,
     ),
     "lamborghini_murcielago_sv": dict(
         max_speed=219, acceleration=32, brake=41.6, friction=4.9, tier="B",
         speed_levels=[219, 263, 369],
-        nitro_duration=14, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
+        nitro_duration=14.0, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
     ),
     "ferrari_f430_2005": dict(
         max_speed=219, acceleration=32, brake=44.8, friction=5.6, tier="B",
         speed_levels=[219, 275, 375],
-        nitro_duration=14, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
+        nitro_duration=14.0, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
+    ),
+    "hyundai_n_vision_74": dict(
+        max_speed=225, acceleration=32, brake=44.8, friction=5.6, tier="B",
+        speed_levels=[225, 285, 350],
+        nitro_duration=14.3, nitro_boost=65, nitro_boost_time=3.2, nitro_refill_1per3=4.7,
     ),
     # ── Tier C — hypercars ───────────────────────────────────────────
     "mclaren_600lt": dict(
         max_speed=250, acceleration=35, brake=49.0, friction=6.0, tier="C",
         speed_levels=[250, 300, 375],
-        nitro_duration=14, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
+        nitro_duration=14.0, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
     ),
     "koenigsegg_gemera": dict(
         max_speed=250, acceleration=45, brake=63.0, friction=5.95, tier="C",
         speed_levels=[250, 300, 375],
-        nitro_duration=15, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
+        nitro_duration=15.0, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=5.0,
     ),
     # ── Tier D — extreme hypercars ───────────────────────────────────
     "lamborghini_centenario": dict(
         max_speed=281, acceleration=50, brake=75.0, friction=5.95, tier="D",
         speed_levels=[281, 330, 400],
-        nitro_duration=15, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
+        nitro_duration=15.0, nitro_boost=60, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
     ),
     "lamborghini_countach_2021": dict(
         max_speed=281, acceleration=50, brake=90.0, friction=5.95, tier="D",
         speed_levels=[281, 330, 400],
-        nitro_duration=15, nitro_boost=64, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
+        nitro_duration=15.0, nitro_boost=64, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
     ),
     "pagani_utopia": dict(
         max_speed=313, acceleration=60, brake=108.0, friction=7.0, tier="D",
         speed_levels=[313, 460, 500],
-        nitro_duration=15, nitro_boost=70, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
+        nitro_duration=15.0, nitro_boost=70, nitro_boost_time=3.2, nitro_refill_1per3=4.5,
     ),
     # ── Tier S — Scania trucks ───────────────────────────────────────
     # Đính chính: Svempa bản 770S là FrostFire (không phải FrostBite)
     "scania_r730_2010": dict(
         max_speed=325, acceleration=52, brake=94.64, friction=6.5, tier="S",
         speed_levels=[325, 460, 540],
-        nitro_duration=14, nitro_boost=62, nitro_boost_time=3.0, nitro_refill_1per3=4.5,
+        nitro_duration=14.0, nitro_boost=62, nitro_boost_time=3.0, nitro_refill_1per3=4.5,
     ),
     "scania_svempa_frostfire": dict(
         max_speed=350, acceleration=62, brake=112.84, friction=7.0, tier="S",
         speed_levels=[350, 470, 565],
-        nitro_duration=16, nitro_boost=77, nitro_boost_time=2.8, nitro_refill_1per3=4.5,
+        nitro_duration=16.0, nitro_boost=77, nitro_boost_time=2.8, nitro_refill_1per3=4.5,
     ),
 }

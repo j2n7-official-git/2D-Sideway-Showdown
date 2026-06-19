@@ -459,16 +459,23 @@ def _rotate_about_rear(racer, d_ang: float) -> bool:
     racer.x, racer.y = nx, ny
     return True
 
-_POLY_N    = 24    # số đỉnh polygon mô phỏng viền xe (20-25 — cân bằng
-                    # giữa chính xác và chi phí; siêu xe góc cạnh phức
-                    # tạp như F1/Devel Sixteen cần nhiều hơn, nhưng xe
-                    # đua thường trong game không cần tới mức đó)
+_POLY_N    = 30    # 24 → 30 (mục #4): vẫn trong vùng tối ưu (≤32 theo
+                    # fact #2), sai số thị giác so với viền cong thật ~0
+                    # ở cỡ sprite này; không đẩy cao hơn (vô ích, tốn CPU)
 _POLY_STEP = 1.5    # px giữa 2 điểm sample dọc mỗi cạnh — NHỎ HƠN 1
                     # pixel của ảnh tường → không còn khoảng hở có nghĩa
                     # nào để tường "lọt qua" được (tường cũng là dữ liệu
                     # pixel rời rạc, không có nét nào mỏng hơn 1px)
 _POLY_FLAT_FRONT = 0.55   # mũi — giữ nguyên tỉ lệ cũ
 _POLY_FLAT_REAR  = 0.80   # đuôi — chỉ vuốt nhọn 20% cuối (đuôi xe vuông hơn mũi)
+
+
+def _poly_param_cosine(i, n):
+    """Phân bố tham số s∈[-1,1] theo cosine — DỒN đỉnh về 2 đầu mút
+    (|s| gần 1, nơi viền cong gấp nhất: mũi/đuôi vuốt nhọn) theo fact #3,
+    thay vì chia đều tuyến tính (lãng phí đỉnh ở 2 hông thẳng)."""
+    t = i / (n - 1)                  # 0..1 đều
+    return -math.cos(t * math.pi)    # -1..1, dày về 2 đầu
 
 
 def _car_width_profile(s, hw):
@@ -492,12 +499,12 @@ def _car_polygon_world(racer, x, y):
     half_n = _POLY_N // 2
     verts = []
     for i in range(half_n):                            # đuôi → mũi, cạnh PHẢI
-        s = -1.0 + 2.0 * i / (half_n - 1)
+        s = _poly_param_cosine(i, half_n)              # -1..1, dồn về 2 đầu
         w = _car_width_profile(s, hw)
         lx, ly = s * L, w
         verts.append((x + lx*fx + ly*px, y + lx*fy + ly*py))
     for i in range(half_n):                            # mũi → đuôi, cạnh TRÁI
-        s = 1.0 - 2.0 * i / (half_n - 1)
+        s = -_poly_param_cosine(i, half_n)             # đảo dấu cho nửa sau
         w = _car_width_profile(s, hw)
         lx, ly = s * L, -w
         verts.append((x + lx*fx + ly*px, y + lx*fy + ly*py))
@@ -541,44 +548,77 @@ def _swept_advance(racer, dx, dy, steps=8):
     return racer.x+dx*ok, racer.y+dy*ok, True
 
 
+def _wall_normal(x, y, fx, fy, r=6):
+    """
+    Pháp tuyến tường THẬT tại (x,y) bằng cách lấy mẫu wall_mask quanh
+    điểm tiếp xúc (gradient): bắn 8 tia, tia nào trúng tường thì cộng
+    vector NGƯỢC lại → tổng = hướng "ra xa khối tường" = pháp tuyến.
+
+    Thay cho giả định cũ nx,ny = -fx,-fy (chỉ là ngược hướng MŨI xe,
+    KHÔNG phải pháp tuyến tường thật → trượt dọc tường tính sai hoàn
+    toàn). Fallback -fx,-fy chỉ khi không lấy mẫu được (góc kẹt hiếm).
+    """
+    sx = sy = 0.0
+    for a_deg in range(0, 360, 45):
+        ar = math.radians(a_deg)
+        dx, dy = math.cos(ar), math.sin(ar)
+        if is_hard_wall(int(x + dx*r), int(y + dy*r)):
+            sx -= dx; sy -= dy
+    m = math.hypot(sx, sy)
+    if m < 1e-3:
+        return -fx, -fy
+    return sx/m, sy/m
+
+
 def resolve_wall_collision(racer, tx, ty, fx, fy, dt):
     """
-    ── PATCH FIX: xử lý va chạm tường ───────────────────────────────
-    Phân loại góc va chạm và áp dụng phản lực + ma sát.
+    ── VA CHẠM TƯỜNG — MÔ HÌNH LIÊN TỤC (mục #1,#2,#3,#5 của handoff) ──
+    Mọi góc va chạm (0°-180°) đi qua ĐÚNG 1 công thức v_n/v_t, KHÔNG
+    rẽ nhánh theo ngưỡng góc cứng (rule #1). Ma sát trượt = 0 khi xe
+    trượt song song hoàn hảo với tường, max khi gần vuông (rule #2,
+    KHÔNG có sàn dương). Chỉ ghi _move_dir, KHÔNG đụng racer.angle
+    (rule #5). KHÔNG teleport x/y — dùng thẳng vị trí swept an toàn
+    tx,ty do _swept_advance trả về (rule #3).
     """
-    # Vector pháp tuyến (normal) giả định ngược hướng xe
-    nx, ny = -fx, -fy
-    tangent = (-ny, nx)
+    # (1) Đặt xe tại vị trí swept an toàn — KHÔNG +nx*2 (rule #3)
+    racer.x, racer.y = tx, ty
 
-    # Vận tốc hiện tại (px/s)
+    # (2) Pháp tuyến tường thật + tiếp tuyến
+    wnx, wny = _wall_normal(tx, ty, fx, fy)
+    tang_x, tang_y = -wny, wnx
+
+    # (3) Vận tốc theo HƯỚNG DI CHUYỂN THẬT (_move_dir), không phải angle
+    mdx, mdy = fwd_vec(getattr(racer, '_move_dir', racer.angle))
     v_px = racer.velocity * _MOVE_SCALE
+    vx, vy = mdx*v_px, mdy*v_px
 
-    # Phân rã vận tốc thành vuông góc + song song
-    v_n = v_px * (fx * nx + fy * ny)
-    v_t = v_px - v_n
+    # (4) Phân rã + công thức LIÊN TỤC (1 nhánh duy nhất)
+    v_n = vx*wnx + vy*wny           # <0 = đang ép vào tường
+    v_t = vx*tang_x + vy*tang_y
+    RESTITUTION = 0.10              # dội nhẹ chỉ khi đang ép vào
+    new_vn = (-v_n*RESTITUTION) if v_n < 0 else v_n
+    new_vx = wnx*new_vn + tang_x*v_t
+    new_vy = wny*new_vn + tang_y*v_t
 
-    # Phân loại góc va chạm
-    approach_cos = abs(v_n) / (abs(v_px) + 1e-6)
-    if approach_cos > 0.55:
-        # HEAD-ON: bật ngược, dừng lại
-        v_n *= -0.5
-        v_t *= 0.2
+    new_spd = math.hypot(new_vx, new_vy)
+    if new_spd > 1e-3:
+        slide_dir = math.degrees(math.atan2(new_vy, new_vx))
+        racer._move_dir = slide_dir          # rule #5: chỉ ghi _move_dir
+        # (5) Ma sát trượt phụ thuộc độ lệch, = 0 khi song song (rule #2)
+        _misalign  = abs(angle_diff(slide_dir, racer.angle)) / 180.0
+        SLIP_DECEL = _misalign * 5.0          # kph/s, max 5 khi gần vuông
+        racer.velocity = max(0.0, new_spd/_MOVE_SCALE - SLIP_DECEL*dt)
     else:
-        # GLANCING: trượt song song
-        v_n *= -0.3
-        v_t *= 0.85
+        racer.velocity = 0.0
+    racer._cached_normal = (wnx, wny)
 
-    # Cập nhật vận tốc mới
-    racer.velocity = (v_n + v_t) / _MOVE_SCALE
-
-    # Đẩy xe ra khỏi tường theo normal
-    racer.x = tx + nx * 2.0
-    racer.y = ty + ny * 2.0
-    racer._cached_normal = (nx, ny)
-
-# PATCH START: drift_physics helper
+# PATCH START: drift_physics helper  — ⚠️ DISABLED (dead, do NOT re-enable as-is)
+# Giữ lại làm tham chiếu lịch sử. KHÔNG gọi: model sai (angle radian,
+# vx/vy/angular_velocity/max_accel không tồn tại trên Racer). Nếu cần
+# drift vật lý riêng trong tương lai, viết lại theo model velocity-scalar
+# + _move_dir của engine này, đừng dùng vx/vy.
 def drift_physics(car, dt=0.016):
-    """Drift helper: giảm tốc dọc, ma sát ngang, giới hạn nitro."""
+    """[DISABLED] Xem ghi chú phía trên — không dùng."""
     import math
     FACTOR_LONGITUDINAL = 0.92
     LATERAL_FRICTION = 0.6
@@ -624,10 +664,13 @@ def move_car(racer, dt: float) -> None:
     spd = racer.velocity * _MOVE_SCALE
     vx, vy = fx * spd, fy * spd
 
-    # PATCH START: call drift_physics in integrate
-    if getattr(racer, "is_drifting", False):
-        drift_physics(racer, dt=dt)
-    # PATCH END
+    # NOTE: drift_physics() ĐÃ GỠ KHỎI luồng — code chết & sai model:
+    #   - đọc racer.angle như RADIAN (engine dùng ĐỘ)
+    #   - thao tác racer.vx/vy/angular_velocity/max_accel/base_max_accel
+    #     mà Racer KHÔNG có field nào → vi phạm rule #5 (đổi hướng di
+    #     chuyển ngoài _move_dir). is_drifting hiện luôn False nên chưa
+    #     nổ; gỡ lời gọi để nếu sau này bật drift cũng không corrupt.
+    #   Drift thật đã nằm trong steer(handbrake=True) + grip ở racer_v2.
 
     # ── [A] ESCAPE: xe đang NẰM TRONG tường ──────────────────────────
     if is_hard_wall(int(racer.x), int(racer.y)):
@@ -1055,16 +1098,21 @@ def handle_capsule_collisions(racers: list, dt: float) -> None:
                 sb = ((cq[0]-b.x)*b_fx + (cq[1]-b.y)*b_fy) / max(b_hlen,1.0)
                 sa = clamp(sa,-1.0,1.0);  sb = clamp(sb,-1.0,1.0)
 
-                # ── TAPER bán kính ở mũi/đuôi ─────────────────────
-                # Capsule cũ: bán kính CỐ ĐỊNH suốt chiều dài (như xúc
-                # xích) → 2 đầu phình rộng hơn hình xe thật (PNG đã cắt
-                # nền, mũi/đuôi thu nhỏ dần) → đẩy xe khác/tường xa hơn
-                # mức cần thiết. Taper: thu nhỏ bán kính dần về 2 đầu
-                # (sa²/sb² = 0 ở tâm, 1 ở mũi/đuôi) — khớp hình hexagon
-                # thu hẹp 2 đầu như sprite thật, không còn "phình".
-                _TAPER = 0.35   # giảm tối đa 35% bán kính tại mũi/đuôi
+                # ── TAPER + TÁCH 2 BÁN KÍNH (fix mục #6) ──────────
+                # Vấn đề cũ: 1 bán kính taper dùng CHUNG cho cả "phát
+                # hiện va chạm" lẫn "đẩy ra". Taper làm mũi/đuôi nhỏ →
+                # 2 xe xếp dọc (grid xuất phát) phải gần HƠN NỮA mới bị
+                # phát hiện → chồng lên nhau lúc spawn (pile-up).
+                # Fix theo gợi ý #2 của handoff: DÙNG 2 BÁN KÍNH RIÊNG.
+                _TAPER = 0.35
+                #  • DETECT: gần full (không taper) → bắt va chạm SỚM,
+                #    xe xếp dọc sát nhau vẫn được phát hiện kịp.
+                sum_r_det = ra + rb
+                #  • PUSH: taper → KHÔNG đẩy xe khác lố ra ngoài hình
+                #    thật (đây là lý do taper tồn tại lúc đầu).
                 ra_t = ra * (1.0 - _TAPER * sa*sa)
                 rb_t = rb * (1.0 - _TAPER * sb*sb)
+                sum_r_push = ra_t + rb_t
 
                 # dx, dy = vector từ điểm gần nhất của B → A
                 dx = cp[0] - cq[0]
@@ -1072,11 +1120,8 @@ def handle_capsule_collisions(racers: list, dt: float) -> None:
                 # d = khoảng cách giữa 2 điểm gần nhất
                 d  = math.hypot(dx, dy)
 
-                # sum_r = tổng bán kính ĐÃ TAPER (ngưỡng va chạm)
-                sum_r = ra_t + rb_t
-
-                if d >= sum_r or d < 0.01:
-                    # Không va chạm hoặc tâm trùng nhau (degenerate)
+                if d >= sum_r_det or d < 0.01:
+                    # Không va chạm (theo bán kính DETECT) hoặc degenerate
                     continue
 
                 # ── Normal va chạm ────────────────────────────────
@@ -1086,9 +1131,12 @@ def handle_capsule_collisions(racers: list, dt: float) -> None:
                 cnx   = dx * inv_d   # normal x (đơn vị)
                 cny   = dy * inv_d   # normal y (đơn vị)
 
-                # depth = mức độ xuyên thấu (px)
-                # = tổng radius (đã taper) - khoảng cách thực tế
-                depth = sum_r - d
+                # depth = xuyên thấu theo bán kính PUSH (đã taper).
+                # Khi chỉ chạm trong vùng taper (sum_r_push ≤ d < sum_r_det):
+                # depth ≤ 0 → KHÔNG đẩy tịnh tiến (tránh tách văng xe
+                # xếp dọc lúc đứng yên), nhưng impulse/friction phía dưới
+                # VẪN xét vì đã phát hiện va chạm → phản hồi vẫn tự nhiên.
+                depth = sum_r_push - d
 
                 # lat — thành phần NGANG của lực so với thân xe
                 #   = cross(forward, normal) ∈ [-1,1]
@@ -1097,7 +1145,7 @@ def handle_capsule_collisions(racers: list, dt: float) -> None:
                 lat_a = a_fx*cny - a_fy*cnx
                 lat_b = b_fx*cny - b_fy*cnx
 
-                push = depth * 0.52 + 0.8
+                push = (depth * 0.52 + 0.8) if depth > 0.0 else 0.0
 
                 # Phân bổ push: chạm càng xa tâm → càng nhiều XOAY, ít TỊNH TIẾN
                 #   rot_frac = |s| × 0.65  (tâm: 100% tịnh tiến, mũi: chỉ 35%)
@@ -1163,7 +1211,10 @@ def handle_capsule_collisions(racers: list, dt: float) -> None:
                     # Friction tỉ lệ với độ overlap:
                     #   depth lớn → cọ nhiều → friction lớn hơn
                     # min(0.08): giới hạn tối đa 8% tốc độ / lần cọ
-                    fric = min(0.08, depth * 0.005)
+                    # max(0,depth): khi chỉ chạm trong vùng taper (depth<0)
+                    # → fric=0, KHÔNG cho 1-fric>1 làm xe tăng tốc (bug
+                    # sinh ra từ việc tách 2 bán kính ở fix #6).
+                    fric = min(0.08, max(0.0, depth) * 0.005)
                     a.velocity *= (1.0 - fric)
                     b.velocity *= (1.0 - fric)
                     # Thêm 1 chút đẩy ngang nếu chênh tốc độ đủ lớn

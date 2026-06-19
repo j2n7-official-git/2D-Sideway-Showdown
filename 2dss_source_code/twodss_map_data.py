@@ -37,7 +37,7 @@ THÊM MAP MỚI:
 
 TÊN FILE THUMBNAIL (trong assets/map_thumbnails/):
     greenwood-circuit-thumbnail.png
-    Sportpit-track-thumbnail.png
+    sportpit-track-thumbnail.png
     sandy-circuit-thumbnail.png        ← không có hậu tố -thumbnail
     velodrama-thumbnail.png
     commingsoon-thumbnail.png
@@ -62,7 +62,7 @@ MAP_LIST = [
     {
         "id"            : "sportpit_track",
         "name"          : "SPORTPIT TRACK",
-        "file"          : "Sportpit-track-thumbnail",
+        "file"          : "sportpit-track-thumbnail",
         "coming_soon"   : False,
         "preview_color" : (80, 80, 160),    # xanh tím — kỹ thuật cao
     },

@@ -66,6 +66,7 @@ FILE_MAP = {
     "nissan_gtr_r34"            : "nissan_skyline_gtr_r34",
     "lamborghini_murcielago_sv" : "lamborghini_murcielago_lp670-4_superveloce",
     "ferrari_f430_2005"         : "ferrari_f430_2005",
+    "hyundai_n_vision_74"       : "hyundai-n-vision-74",
     "mclaren_600lt"             : "mclaren_600lt",
     "koenigsegg_gemera"         : "koenigsegg_gemera",
     "lamborghini_centenario"    : "lamborghini_centenario",
@@ -127,7 +128,7 @@ COMPOSURE_LEVELS = [1.00, 1.0875, 1.175, 1.2625, 1.35]   # giữ y số cũ
 COMPOSURE_LABELS = ["Ngay Ngo", "Long Ngong", "Vung Tay", "Lao Luyen", "Tinh Ruou"]
 #                  thấp nhất, vô tri, dễ panic        trung bình        cao nhất — tỉnh, làm chủ, biết DRIFT qua cua
 COMPOSURE_VARIANCE  = 0.25   # ± biên dao động quanh composure GỐC
-COMPOSURE_LERP_RATE = 0.6    # /giây — tốc độ trôi về "đích" mới, không nhảy cục
+COMPOSURE_LERP_RATE = 0.5    # /giây — tốc độ trôi về "đích" mới, không nhảy cục
 AVOID_RADIUS_BOOST = 1.30   # +30% bán kính kiểm soát/né xe, KHÔNG áp cho wall-scan/lookahead
 
 # DRIVER_ROSTER: (name, country, aggr_level_index 0-4)
@@ -198,6 +199,8 @@ class Racer:
         self._waypoints = waypoints  # None or list[(x,y)]
         self._escape_commit_t = 0.0 # FUNCTION 02 — đồng hồ commit hướng escape
         self._escape_commit_time = 1.0  # có thể tinh chỉnh
+        # PATCH START: drift flag
+        self.is_drifting = False
 
         # ── Driver profile (v2 MỚI) ───────────────────────────────────
         self.driver_name    = driver_name or ("YOU" if is_player else "???")

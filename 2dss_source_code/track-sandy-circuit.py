@@ -34,6 +34,7 @@ from twodss_hud      import HUD, fmt_time, draw_shadow
 from twodss_car_data import CAR_STATS
 import twodss_physics as physics
 from twodss_racer_v2  import Racer, setup_map, pick_drivers
+from twodss_pause import PauseMenu
 
 # ── PATH ────────────────────────────────────────────────────────────
 def _base_dir():
@@ -391,8 +392,8 @@ def update_positions():
 
 # ── HUD ─────────────────────────────────────────────────────────────
 hud=HUD(screen, total_racers=len(all_racers), max_laps=MAX_LAPS,
-        base_dir=BASE_DIR,
-        car_screen_x=CAR_SCREEN_X, car_screen_y=CAR_SCREEN_Y)
+        base_dir=BASE_DIR, car_screen_x=CAR_SCREEN_X, car_screen_y=CAR_SCREEN_Y)
+pause = PauseMenu(screen, BASE_DIR)        # ← thêm dòng này
 
 # ── MAIN LOOP ───────────────────────────────────────────────────────
 running=True; race_clock=0.0
@@ -405,12 +406,25 @@ while running:
     now=time.monotonic()
 
     for ev in pygame.event.get():
-        if ev.type==pygame.QUIT: running=False
-        if ev.type==pygame.KEYDOWN:
-            if ev.key==pygame.K_ESCAPE: running=False
-            # LCTRL nitro v2: KHÔNG còn kích 1 lần ở KEYDOWN — giờ đọc
-            # held mỗi frame bên dưới (want_nitro), "giữ bao nhiêu tăng
-            # bấy nhiêu, nhả ra để tiết kiệm nitro".
+        if ev.type == pygame.QUIT: running = False
+        if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE: running = False
+        act = pause.handle_event(ev)  # ← thêm
+        if act == "restart":  # ← thêm
+            countdown_t = COUNTDOWN_START
+            _go_shown = False;
+            _go_time = None;
+            _go_appear_t = None;
+            _you_fade_t = None
+            for i, r in enumerate(all_racers):
+                gx, gy = _slot_pos(_slots[i])
+                r.x, r.y = gx, gy
+                r.angle = 270.0
+                r.velocity = 0.0
+                r.wp_idx = 0
+                r.finished = False
+                if hasattr(r, '_finish_time'): del r._finish_time
+        elif act == "quit_showroom":  # ← thêm
+            running = False
 
     keys=pygame.key.get_pressed()
     handbrake=keys[pygame.K_SPACE] if countdown_t<=1.0 else False
@@ -431,7 +445,7 @@ while running:
     if race_active and _you_fade_t is None:
         _you_fade_t = now
 
-    if race_active:
+    if race_active and not pause.open:
         # Luôn update player — kể cả khi finished
         # (logic phanh trượt nằm trong update_player, cần được gọi mỗi frame)
         player.update_player(dt,now,keys,handbrake,want_nitro)
@@ -474,6 +488,11 @@ while running:
     if countdown_t > 0 or _go_elapsed < 1.3:
         hud.draw_countdown(countdown_t, _go_elapsed)
 
+    if countdown_t > 0 or _go_elapsed < 1.3:
+        hud.draw_countdown(countdown_t, _go_elapsed)
+
+    pause.draw()  # ← thêm, ngay trước flip
     pygame.display.flip()
+
 
 pygame.quit(); sys.exit()
