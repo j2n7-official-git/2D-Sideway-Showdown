@@ -408,22 +408,24 @@ class HUD:
         self.screen.blit(s_s, (cx+2, cy+2))
         self.screen.blit(t_s, (cx,   cy))
 
-    def draw_finish_overlay(self, player):
-        ov = pygame.Surface((self.W, 300), pygame.SRCALPHA)
-        ov.fill((0, 0, 0, 160))
-        self.screen.blit(ov, (0, self.H // 2 - 110))
-        title = "RACE COMPLETE!"
-        _draw_shadow(self.screen, title, self.font_xl, (255,220,50),
-                     self.W//2 - self.font_xl.size(title)[0]//2, self.H//2-100)
-        for i, lt in enumerate(player.lap_times):
-            row = f"Lap {i+1}:  {_fmt_time(lt)}"
-            col = (255,220,50) if lt == min(player.lap_times) else (220,220,220)
-            _draw_shadow(self.screen, row, self.font_md, col,
-                         self.W//2-140, self.H//2-20+i*40)
-        footer = (f"Total: {_fmt_time(sum(player.lap_times))}"
-                  f"   Pos: {player.pos}/{self.total_racers}   ESC to exit")
-        _draw_shadow(self.screen, footer, self.font_md, (160,200,255),
-                     self.W//2 - self.font_md.size(footer)[0]//2, self.H//2+110)
+    def draw_finish_overlay(self, player, all_racers=None, start_time=0):
+        # 1. Màn hình mờ đen phủ lên đường đua khi cán đích
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        self.screen.blit(overlay, (0, 0))
+
+        # 2. Hiện chữ FINISHED màu vàng thể thao ở chính giữa màn hình
+        font_finish = pygame.font.SysFont("impact", 90)
+        finish_surf = font_finish.render("FINISHED", True, (255, 215, 0))  # Màu vàng Gold
+
+        # Tạo bóng đổ cho chữ ngầu hơn
+        shadow_surf = font_finish.render("FINISHED", True, (0, 0, 0))
+
+        fx = self.screen.get_width() // 2 - finish_surf.get_width() // 2
+        fy = self.screen.get_height() // 2 - finish_surf.get_height() // 2
+
+        self.screen.blit(shadow_surf, (fx + 4, fy + 4))  # Vẽ bóng đổ
+        self.screen.blit(finish_surf, (fx, fy))  # Vẽ chữ chính
 
     # -----------------------------------------------------------------
     # PRIVATE

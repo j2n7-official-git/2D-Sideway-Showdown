@@ -106,7 +106,7 @@ class PauseMenu:
 
     def _load_font(self, size):
         # tự dò file font "athletic" trong assets/font/
-        fdir = _resource_path(self.base_dir, os.path.join("assets","font"))
+        fdir = _resource_path(self.base_dir, os.path.join("assets","fonts"))
         cands = []
         cands += [os.path.join(fdir, n) for n in
                   ("SVN-New Athletic M54.ttf")]

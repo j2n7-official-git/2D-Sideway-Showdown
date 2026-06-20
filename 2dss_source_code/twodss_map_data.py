@@ -85,38 +85,15 @@ MAP_LIST = [
         "preview_color" : (40, 80, 140),    # xanh đêm — thành phố
     },
 
-    # ══════════════════════════════════════════════════════════════════
-    # COMING SOON — 4 slot giữ chỗ, dùng chung 1 ảnh comingsoon-thumbnail.png
-    # Khi map mới ra: đổi coming_soon = False, cập nhật id / name / file
-    # ══════════════════════════════════════════════════════════════════
+    # ── MAP 5 - NEW ───────────────────────────────────────────────────
     {
-        "id"            : "coming_soon_5",
-        "name"          : "COMING SOON",
-        "file"          : "comingsoon-thumbnail",
-        "coming_soon"   : True,
-        "preview_color" : (50, 50, 80),
+        "id"            : "dustfactory_track",
+        "name"          : "THE DUSTFACTORY",
+        "file"          : "the-dustfactory-thumbnail",
+        "coming_soon"   : False,
+        "preview_color" : (255, 214, 102),    # TRẮNG CÁT MỊN
     },
-    {
-        "id"            : "coming_soon_6",
-        "name"          : "COMING SOON",
-        "file"          : "comingsoon-thumbnail",
-        "coming_soon"   : True,
-        "preview_color" : (50, 50, 80),
-    },
-    {
-        "id"            : "coming_soon_7",
-        "name"          : "COMING SOON",
-        "file"          : "comingsoon-thumbnail",
-        "coming_soon"   : True,
-        "preview_color" : (50, 50, 80),
-    },
-    {
-        "id"            : "coming_soon_8",
-        "name"          : "COMING SOON",
-        "file"          : "comingsoon-thumbnail",
-        "coming_soon"   : True,
-        "preview_color" : (50, 50, 80),
-    },
+
 
     # ──────────────────────────────────────────────────────────────────
     # THÊM MAP MỚI VÀO ĐÂY — copy block dưới, bỏ dấu # và điền vào
