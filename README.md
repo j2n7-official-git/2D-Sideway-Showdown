@@ -1,4 +1,5 @@
-<img width="1920" height="1080" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/4a0135fa-3e6c-4381-8128-1f96919bf10d" /># 🏁 2D Sideway Showdown
+<img width="1920" height="1080" alt="2dss_standby_bg" src="https://github.com/user-attachments/assets/82b8043c-53c1-4442-b3b3-87fbe78aed1d" />
+# 🏁 2D Sideway Showdown
 
 **2D Sideway Showdown** là một trò chơi đua xe góc nhìn từ trên xuống (Top-down 2D Racing Game) được phát triển hoàn toàn bằng ngôn ngữ Python (tối ưu hóa hiệu năng trên **Python 3.14.5**) kết hợp cùng thư viện Pygame. Dự án hướng tới một gameplay tốc độ cao, chân thực nhờ sự kết hợp chặt chẽ giữa mô phỏng vật lý trượt bánh (sideway) và hệ thống trí tuệ nhân tạo (AI Bot) thế hệ mới.
 
@@ -104,6 +105,7 @@ chạy thông qua code và đuộc thực nghiệm thường xuyên:
 <img width="1920" height="1080" alt="Screenshot (176)" src="https://github.com/user-attachments/assets/73de59d7-ed0c-4940-a74c-723a86a73a8b" />
 <img width="1920" height="1080" alt="Screenshot (175)" src="https://github.com/user-attachments/assets/5c9690ca-2b15-44da-b1b8-1299a6e83342" />
 <img width="1920" height="1080" alt="Screenshot (174)" src="https://github.com/user-attachments/assets/c7b72049-453b-4ced-8c97-029ced3926ab" />
+<img width="1920" height="1080" alt="Screenshot (171)" src="https://github.com/user-attachments/assets/4a0135fa-3e6c-4381-8128-1f96919bf10d" />
 
 <img width="1920" height="1080" alt="Screenshot (161)" src="https://github.com/user-attachments/assets/d12817f7-3063-4414-8435-0594cc5ade57" />
 <img width="1920" height="1080" alt="Screenshot (172)" src="https://github.com/user-attachments/assets/276257c0-5499-4211-9ddd-13a88bc39d65" />
